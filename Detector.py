@@ -1,6 +1,6 @@
 from detectron2.engine import DefaultPredictor 
 from detectron2.config import get_cfg
-from detectron2.data import MetadataCatalog
+from detectron2.data import MetadataCatalog, DatasetMapper
 from detectron2.utils.visualizer import ColorMode, Visualizer
 from detectron2 import model_zoo
 
@@ -36,8 +36,10 @@ class Detector:
 
         else: 
             predictions, segmentInfo = self.predictor(image)["panoptic_seg"]
-            viz = Visualizer(image[:,:,::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]))
+            print(predictions, "segment", segmentInfo); 
+            viz = Visualizer(image[:,:,::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])) 
             output = viz.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentInfo)
+            # output (predictions, segmentInfo) explained here https://detectron2.readthedocs.io/en/latest/tutorials/models.html#model-output-format
 
         cv2.imshow("Result", output.get_image()[:,:,::-1])
         cv2.waitKey(0)
